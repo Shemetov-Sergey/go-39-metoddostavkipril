@@ -18,7 +18,7 @@ test:
   stage: test
   image: golang:1.15
   script:
-    - echo "No tests!"
+    - go test -v
 
 lint:
   stage: test
@@ -35,7 +35,9 @@ build_image:stable:
   services:
     - docker:dind
   script:
-    - echo "No build image commands!!!"
+    - docker build -t ${PUBLIC_REGISTRY_HOST}/${PUBLIC_REGISTRY_APP_NAME}:${CI_COMMIT_REF_NAME} .
+    - docker login -u ${PUBLIC_REGISTRY_OWNER} -p ${PUBLIC_REGISTRY_PASSWORD} ${PUBLIC_REGISTRY_HOST}
+    - docker push ${PUBLIC_REGISTRY_HOST}/${PUBLIC_REGISTRY_APP_NAME}
   only:
     - master
 
@@ -45,5 +47,7 @@ build_image:latest:
   services:
     - docker:dind
   script:
-    - echo "No build image commands!!!"
+    - docker build -t ${PUBLIC_REGISTRY_HOST}/${PUBLIC_REGISTRY_APP_NAME}:latest .
+    - docker login -u ${PUBLIC_REGISTRY_OWNER} -p ${PUBLIC_REGISTRY_PASSWORD} ${PUBLIC_REGISTRY_HOST}
+    - docker push ${PUBLIC_REGISTRY_HOST}/${PUBLIC_REGISTRY_APP_NAME}
   when: manual
